@@ -39,6 +39,8 @@ var (
 	VarStringBranch string
 	// VarStringStyle describes the style of output files.
 	VarStringStyle string
+	// VarStringMain main file name
+	VarStringMain string
 )
 
 // GoCommand gen go project files from command line
@@ -66,11 +68,11 @@ func GoCommand(_ *cobra.Command, _ []string) error {
 		return errors.New("missing -dir")
 	}
 
-	return DoGenProject(apiFile, dir, namingStyle)
+	return DoGenProject(apiFile, dir, namingStyle, VarStringMain)
 }
 
 // DoGenProject gen go project files with api file
-func DoGenProject(apiFile, dir, style string) error {
+func DoGenProject(apiFile, dir, style, mainName string) error {
 	api, err := parser.Parse(apiFile)
 	if err != nil {
 		return err
@@ -93,7 +95,7 @@ func DoGenProject(apiFile, dir, style string) error {
 
 	logx.Must(genEtc(dir, cfg, api))
 	logx.Must(genConfig(dir, cfg, api))
-	logx.Must(genMain(dir, rootPkg, cfg, api))
+	logx.Must(genMain(dir, rootPkg, cfg, api, mainName))
 	logx.Must(genServiceContext(dir, rootPkg, cfg, api))
 	logx.Must(genTypes(dir, cfg, api))
 	logx.Must(genRoutes(dir, rootPkg, cfg, api))

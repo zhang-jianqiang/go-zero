@@ -15,7 +15,7 @@ import (
 //go:embed main.tpl
 var mainTemplate string
 
-func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
+func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec, mainName string) error {
 	name := strings.ToLower(api.Service.Name)
 	filename, err := format.FileNamingFormat(cfg.NamingFormat, name)
 	if err != nil {
@@ -27,10 +27,15 @@ func genMain(dir, rootPkg string, cfg *config.Config, api *spec.ApiSpec) error {
 		filename = strings.ReplaceAll(filename, "-api", "")
 	}
 
+	mainFileName := filename
+	if mainName != "" {
+		mainFileName = mainName
+	}
+
 	return genFile(fileGenConfig{
 		dir:             dir,
 		subdir:          "",
-		filename:        filename + ".go",
+		filename:        mainFileName + ".go",
 		templateName:    "mainTemplate",
 		category:        category,
 		templateFile:    mainTemplateFile,
